@@ -1,0 +1,10 @@
+{
+  "name": "JsParser",
+  "version": "1.0.0",
+  "main": "Parser.js",
+  "author": "Luke McGuinness",
+  "license": "MIT",
+  "scripts":{
+    "start": "node ./Parser.js"
+  }
+}
