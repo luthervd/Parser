@@ -5,6 +5,7 @@
   "author": "Luke McGuinness",
   "license": "MIT",
   "scripts":{
-    "start": "node ./Parser.js"
+    "start": "node ./Parser.js",
+    "test": "node ./__tests__/run.js"
   }
 }
