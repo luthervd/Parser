@@ -2,11 +2,18 @@ const Spec = [
 
     //SYMBOLS
     [/^;/, ';'],
+    [/^{/, '{'],
+    [/^}/, '}'],
 
+    //Commments
     [/^\s+/, null],
     [/^\/\/.*/, null],
     [/^\/\*[\s\S]*?\*\//,null],
+
+    //Numbers
     [/^\d+/, 'NUMBER'],
+
+    //Strings
     [/^"[^"]*"/,"STRING"],
     [/^'[^']*'/,"STRING"],
 ]
