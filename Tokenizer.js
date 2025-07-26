@@ -2,8 +2,10 @@ const Spec = [
 
     //SYMBOLS
     [/^;/, ';'],
-    [/^{/, '{'],
-    [/^}/, '}'],
+    [/^\{/, '{'],
+    [/^\}/, '}'],
+    [/^\(/, '('],
+    [/^\)/, ')'],
 
     //Commments
     [/^\s+/, null],
@@ -16,6 +18,11 @@ const Spec = [
     //Strings
     [/^"[^"]*"/,"STRING"],
     [/^'[^']*'/,"STRING"],
+
+    //Math operators
+    [/^[+\-]/,"ADDITIVE_OPERATOR"],
+    [/^[*\/]/,"MULTIPLICATIVE_OPERATOR"]
+
 ]
 
 class Tokenizer{

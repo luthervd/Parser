@@ -59,6 +59,7 @@ class Parser{
             type: 'EmptyStatement',
         }
     }
+
     BlockStatement(){
         this._eat('{');
         const body = this._lookahead.type !== '}' ? this.StatementList('}') : [];
@@ -79,13 +80,62 @@ class Parser{
     }
 
     Expression(){
-        return this.Literal();
+        return this.AdditiveExpression();
+    }
+
+    AdditiveExpression(){
+        return this._BinaryExpression(
+            'MultiplicativeExpression',
+            'ADDITIVE_OPERATOR');
+    }
+
+    MultiplicativeExpression(){
+        return this._BinaryExpression(
+            'PrimaryExpression',
+            'MULTIPLICATIVE_OPERATOR');
+    }
+
+    _BinaryExpression(builderName, operatorToken){
+        let left = this[builderName]();
+
+        while(this._lookahead.type === operatorToken) {
+            const operator = this._eat(operatorToken).value;
+
+            const right = this[builderName]();
+
+            left = {
+                type: 'BinaryExpression',
+                operator,
+                left,
+                right
+            }
+        }
+
+        return left;
+    }
+
+    PrimaryExpression(){
+        switch(this._lookahead.type){
+            case '(':
+                return this.ParenthesizedExpression();
+            default:
+                return this.Literal();
+        }
+        
+    }
+
+    ParenthesizedExpression(){
+        this._eat('(');
+        const expression = this.Expression();
+        this._eat(')');
+        return expression;
     }
 
     Literal(){
         switch(this._lookahead.type){
             case 'NUMBER': return this.NumericLiteral();
             case 'STRING': return this.StringLiteral();
+            case 'ADDITIVE_OPERATOR': return this.AdditiveExpression();
         }
         throw new SyntaxError(`Literal: unexpected literal production ${this._lookahead.value}`);
     }
