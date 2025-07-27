@@ -11,7 +11,7 @@ const tests = [require('./literal-test.js'),
 
 function exec(){
     const program = `
-      (2 * 2) - 3;
+      x = y + 3;
     `;
 
     const ast = parser.parse(program);

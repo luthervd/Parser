@@ -80,7 +80,53 @@ class Parser{
     }
 
     Expression(){
-        return this.AdditiveExpression();
+        return this.AssignmentExpression();
+    }
+
+    AssignmentExpression(){
+        const left = this.AdditiveExpression();
+
+        if(!this._isAssigmentOperator(this._lookahead.type)){
+            return left;
+        }
+
+        return {
+            type: 'AssignmentExpression',
+            operator: this.AssignmentOperator().value,
+            left: this._checkValidAssignmentTarget(left),
+            right: this.AssignmentExpression(),
+        }
+    }
+
+    LeftHandSideExpression(){
+        const identifier =  this.Identifier();
+        return {
+            type: 'Identifier',
+            identifier,
+        }
+    }
+
+    Identifier(){
+        const name = this._eat('IDENTIFIER').value;
+        return name;
+    }
+
+    AssignmentOperator(){
+        if(this._lookahead.type === 'SIMPLE_ASSIGN'){
+            return this._eat("SIMPLE_ASSIGN");
+        }
+        return this._eat("COMPLEX_ASSIGN");
+    }
+
+    _isAssigmentOperator(tokenType){
+        return tokenType === "SIMPLE_ASSIGN" || tokenType === "COMPLEX_ASSIGN";
+    }
+
+    _checkValidAssignmentTarget(node){
+        if(node.type === "Identifier"){
+            return node;
+        }
+        throw new SyntaxError("Invalid left-hand side in assignment expression");
     }
 
     AdditiveExpression(){
@@ -115,13 +161,20 @@ class Parser{
     }
 
     PrimaryExpression(){
+        if(this._isLiteral(this._lookahead.type)){
+            return this.Literal();
+        }
         switch(this._lookahead.type){
             case '(':
                 return this.ParenthesizedExpression();
             default:
-                return this.Literal();
+                return this.LeftHandSideExpression();
         }
         
+    }
+
+    _isLiteral(tokenType){
+        return tokenType === "NUMBER" || tokenType === "STRING";
     }
 
     ParenthesizedExpression(){
