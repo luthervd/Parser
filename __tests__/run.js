@@ -1,5 +1,6 @@
 const {Parser} = require('../Parser')
 const assert = require('assert');
+const util = require('util');
 
 const parser = new Parser();
 
@@ -7,23 +8,31 @@ const tests = [require('./literal-test.js'),
                require('./statement-list-test.js'),
                require('./block-test.js'),
                require('./empty-statement.js'),
-               require('./maths.js')];
+               require('./maths.js'),
+               require('./variable-test.js')];
 
 function exec(){
     const program = `
-      x = y + 3;
+      let x = 3;
     `;
 
     const ast = parser.parse(program);
 
-    console.log(JSON.stringify(ast, null, 2));
+    console.log(util.inspect(ast, { depth: null, colors: true }));
 }
 
 exec();
 
 function test(program, expected){
     const ast = parser.parse(program);
-    assert.deepEqual(ast, expected);
+    
+    try {
+    assert.deepStrictEqual(ast, expected);
+    } catch (e) {
+    console.log('Assertion failed:');
+    console.log(util.inspect(e.actual, { depth: null, colors: true }));
+    console.log(util.inspect(e.expected, { depth: null, colors: true }));
+    }
 }
 
 tests.forEach(testRun => {

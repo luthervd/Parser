@@ -6,6 +6,7 @@ const Spec = [
     [/^\}/, '}'],
     [/^\(/, '('],
     [/^\)/, ')'],
+    [/^,/, ','],
 
     //Commments
     [/^\s+/, null],
@@ -23,12 +24,17 @@ const Spec = [
     [/^[+\-]/,"ADDITIVE_OPERATOR"],
     [/^[*\/]/,"MULTIPLICATIVE_OPERATOR"],
 
+    //Variables
+    [/^\blet\b/,'let'],
+
     //Identifiers
     [/^\w+/, "IDENTIFIER"],
     
     //Assignment Operators
     [/^=/,"SIMPLE_ASSIGN"],
     [/^[\*\/\+\-]=/,"COMPLEX_ASSIGN"],
+
+
 
 ]
 

@@ -46,6 +46,8 @@ class Parser{
                 return this.EmptyStatement();
             case '{':
                 return this.BlockStatement();
+            case 'let':
+                return this.VariableStatement();
             default:
                 return this.ExpressionStatement();
         }
@@ -68,6 +70,46 @@ class Parser{
             type: 'BlockStatement',
             body
         }
+    }
+
+    VariableStatement(){
+        this._eat('let');
+        const declarations = this.VariableDeclarationsList();
+        this._eat(';');
+        return {
+            type: 'VariableStatement',
+            declarations,
+        }
+
+    }
+
+    VariableDeclarationsList(){
+        const declarations = [];
+        do{
+            declarations.push(this.VariableDeclaration())
+        }
+        while(this._lookahead.type === ',' && this._eat(','));
+        return declarations;
+    }
+
+    VariableDeclaration(){
+        const id = this.Identifier();
+        
+        const init = this._lookahead.type !== ';' && this._lookahead.type !== ',' ?
+        this.VariableInitializer() : null;
+        return {
+            type: 'VariableDeclaration',
+            id : {
+                type: 'Identifier',
+                name: id
+            },
+            init,
+        }
+    }
+
+    VariableInitializer(){
+        this._eat('SIMPLE_ASSIGN');
+        return this.AssignmentExpression();
     }
 
     ExpressionStatement(){
